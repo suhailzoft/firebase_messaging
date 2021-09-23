@@ -282,7 +282,6 @@ NSString *const kMessagingPresentationOptionsUserDefaults =
              (void (^)(UNNotificationPresentationOptions options))completionHandler
     API_AVAILABLE(macos(10.14), ios(10.0)) {
   // We only want to handle FCM notifications.
-  if (notification.request.content.userInfo[@"gcm.message_id"]) {
     NSDictionary *notificationDict =
         [FLTFirebaseMessagingPlugin NSDictionaryFromUNNotification:notification];
 
@@ -291,7 +290,6 @@ NSString *const kMessagingPresentationOptionsUserDefaults =
     if (!notificationDict[@"contentAvailable"]) {
       [_channel invokeMethod:@"Messaging#onMessage" arguments:notificationDict];
     }
-  }
 
   // Forward on to any other delegates amd allow them to control presentation behavior.
   if (_originalNotificationCenterDelegate != nil &&
@@ -325,14 +323,12 @@ NSString *const kMessagingPresentationOptionsUserDefaults =
     API_AVAILABLE(macos(10.14), ios(10.0)) {
   NSDictionary *remoteNotification = response.notification.request.content.userInfo;
   // We only want to handle FCM notifications.
-  if (remoteNotification[@"gcm.message_id"]) {
     NSDictionary *notificationDict =
         [FLTFirebaseMessagingPlugin remoteMessageUserInfoToDict:remoteNotification];
     [_channel invokeMethod:@"Messaging#onMessageOpenedApp" arguments:notificationDict];
     @synchronized(self) {
       _initialNotification = notificationDict;
     }
-  }
 
   // Forward on to any other delegates.
   if (_originalNotificationCenterDelegate != nil &&
